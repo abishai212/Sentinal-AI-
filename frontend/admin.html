@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Sentinal AI</title>
+  <meta name="description" content="Sentinal AI Admin Panel: Monitor experts, requests, and platform statistics.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ─── Sidebar ───────────────────────────────────────────────────────────── -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="dot"></div>
+      <h1>Sentinal AI</h1>
+    </div>
+
+    <div class="sidebar-section-label">Main</div>
+
+    <div class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <span class="nav-icon">📊</span>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" data-page="experts" id="nav-experts">
+      <span class="nav-icon">👥</span>
+      <span>Experts</span>
+    </div>
+    <div class="nav-item" data-page="requests" id="nav-requests">
+      <span class="nav-icon">📋</span>
+      <span>Requests</span>
+    </div>
+    <div class="nav-item" data-page="messages" id="nav-messages">
+      <span class="nav-icon">💬</span>
+      <span>Messages</span>
+    </div>
+
+    <div class="sidebar-footer">
+      <a href="landing.html" id="back-to-home">
+        <span>⬅</span>
+        <span>Back to Home</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ─── Main Content ──────────────────────────────────────────────────────── -->
+  <div class="main-content">
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2 id="page-title">Admin Dashboard</h2>
+        <p id="page-sub">System overview and real-time statistics</p>
+      </div>
+      <div class="topbar-right">
+        <span class="admin-badge">🛡️ Admin</span>
+        <button class="refresh-btn" id="refreshBtn">
+          <span class="refresh-icon">↻</span> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: Dashboard ──────────────────────────────────────────────────── -->
+    <div class="page active" id="page-dashboard">
+      <!-- Stat Cards -->
+      <div class="stat-grid">
+        <div class="stat-card primary">
+          <span class="stat-icon">👥</span>
+          <div class="stat-label">Total Experts</div>
+          <div class="stat-value" id="stat-experts">—</div>
+          <div class="stat-sub">Registered on platform</div>
+        </div>
+        <div class="stat-card success">
+          <span class="stat-icon">📋</span>
+          <div class="stat-label">Total Requests</div>
+          <div class="stat-value" id="stat-requests">—</div>
+          <div class="stat-sub">All customer submissions</div>
+        </div>
+        <div class="stat-card warning">
+          <span class="stat-icon">💬</span>
+          <div class="stat-label">Total Messages</div>
+          <div class="stat-value" id="stat-messages">—</div>
+          <div class="stat-sub">Platform chat logs</div>
+        </div>
+        <div class="stat-card danger">
+          <span class="stat-icon">🟡</span>
+          <div class="stat-label">Pending Requests</div>
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-sub">Waiting for expert</div>
+        </div>
+      </div>
+
+      <!-- Recent Requests Preview -->
+      <div class="section-title">Recent Activity <span>Latest 5 Requests</span></div>
+      <div class="panel" id="dash-recent-panel">
+        <div class="panel-head">
+          <h3>📋 Latest Requests</h3>
+          <span class="panel-count" id="dash-req-count">Loading...</span>
+        </div>
+        <div class="table-wrap">
+          <table id="dash-recent-table">
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Submitted</th>
+              </tr>
+            </thead>
+            <tbody id="dash-recent-body">
+              <tr><td colspan="5" style="text-align:center; padding:40px; color:#6b7280;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Experts Preview -->
+      <div class="section-title">Expert Roster <span>Latest 5 Registered</span></div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>👥 Latest Experts</h3>
+          <span class="panel-count" id="dash-exp-count">Loading...</span>
+        </div>
+        <div class="table-wrap">
+          <table id="dash-experts-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Skill</th>
+                <th>Location</th>
+                <th>Online</th>
+                <th>Approved</th>
+              </tr>
+            </thead>
+            <tbody id="dash-experts-body">
+              <tr><td colspan="5" style="text-align:center; padding:40px; color:#6b7280;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: Experts ─────────────────────────────────────────────────────── -->
+    <div class="page" id="page-experts">
+      <div class="section-title">Registered Experts <span>Approve, reject, or remove</span></div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>👥 All Experts</h3>
+          <span class="panel-count" id="exp-count">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Skill</th>
+                <th>Exp</th>
+                <th>Location</th>
+                <th>Online</th>
+                <th>Approved</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="experts-body">
+              <tr><td colspan="10" style="text-align:center; padding:40px; color:#6b7280;">Loading experts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: Requests ────────────────────────────────────────────────────── -->
+    <div class="page" id="page-requests">
+      <div class="section-title">Customer Requests <span>Resolve or delete tickets</span></div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>📋 All Requests</h3>
+          <span class="panel-count" id="req-count">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Problem</th>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Assigned Expert</th>
+                <th>Cost Estimate</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="requests-body">
+              <tr><td colspan="9" style="text-align:center; padding:40px; color:#6b7280;">Loading requests...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: Messages ────────────────────────────────────────────────────── -->
+    <div class="page" id="page-messages">
+      <div class="section-title">Chat Monitor <span>All platform messages</span></div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>💬 All Messages</h3>
+          <span class="panel-count" id="msg-count">—</span>
+        </div>
+        <div class="msg-feed" id="messages-feed">
+          <div style="text-align:center; padding:40px; color:#6b7280;">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

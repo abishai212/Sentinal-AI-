@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Dashboard - Sentinal AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .expert-feed {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+    .req-card {
+      cursor: pointer;
+       transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .req-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .req-card .badge { margin-bottom: 10px; display: inline-block; }
+    .req-meta { font-size: 0.85rem; color: #aaa; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Ribbon -->
+  <nav class="top-nav">
+    <div class="logo">
+      <span class="dot"></span>
+      <h1>Sentinal AI - Expert Portal</h1>
+    </div>
+    <div class="nav-actions" style="display: flex; gap: 15px; align-items: center;">
+      <div id="expertStatusToggle" class="badge hidden" style="cursor: pointer; background: #4CAF50;">Online</div>
+      <button id="logoutBtn" class="btn btn-secondary btn-small hidden" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer;">Logout</button>
+      <div style="position: relative; display: flex; gap: 10px; align-items: center;">
+        <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; z-index: 10;">0</span>
+        <a href="landing.html" class="btn btn-secondary btn-small">⬅ Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Unified Workspace -->
+  <main class="dashboard-container" style="display: block;">
+    
+    <h2>Incoming Help Requests</h2>
+    <div class="expert-feed" id="expertFeed">
+      <!-- Requests populated here -->
+    </div>
+
+  </main>
+
+  <!-- Registration/Login Modal -->
+  <div id="registerModal" class="modal-overlay" style="display: flex;">
+    <div class="modal-card card">
+      <div class="modal-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+        <h3 id="modalTitle">Expert Registration</h3>
+        <div style="font-size: 0.85rem; margin-top: 5px;">
+          <span id="toggleToLogin" style="color: #6366f1; cursor: pointer; text-decoration: underline;">Already have an account? Login</span>
+          <span id="toggleToRegister" class="hidden" style="color: #6366f1; cursor: pointer; text-decoration: underline;">Need an account? Register</span>
+        </div>
+      </div>
+      <div class="modal-content">
+        <p id="modalDesc">Please register your full profile to enter the system. SMS alerts will be sent to your mobile.</p>
+        <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+          <input type="text" id="regName" placeholder="Full Name" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          <input type="email" id="regEmail" placeholder="Email Address" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          <input type="tel" id="regMobile" placeholder="Mobile Number (e.g. +1234567890)" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          <input type="text" id="regLocation" placeholder="City / Location" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          <input type="number" id="regExperience" placeholder="Years of Experience" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          
+          <select id="regSkill" style="width: 100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+            <option value="All">All / General</option>
+            <option value="Plumber">Plumber (Pipes, leaks)</option>
+            <option value="Electrician">Electrician (Wires, plugs)</option>
+            <option value="Software Developer">Software Developer (Code, bugs)</option>
+            <option value="Mobile Technician">Mobile Technician (Screens, phones)</option>
+            <option value="Cybersecurity">Cybersecurity (Ransomware)</option>
+          </select>
+        </div>
+        <button id="registerBtn" class="btn btn-primary" style="width: 100%;">Enter Portal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Action Modal -->
+  <div id="actionModal" class="modal-overlay hidden">
+    <div class="modal-card card" style="max-width: 600px; width: 90%;">
+      <div class="modal-header">
+        <h3>Request Details</h3>
+        <button id="closeActionModalBtn" class="btn-close" style="background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div id="reqDetailContent" style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+          <!-- Request data populated here -->
+        </div>
+
+        <div id="expertActionControls" style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <input type="text" id="offerPrice" placeholder="Offer Price (e.g. $45)" style="flex: 1; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+          <button id="acceptReqBtn" class="btn btn-primary glow-btn">Accept Request</button>
+          <button id="resolveReqBtn" class="btn btn-secondary hidden">Mark Resolved</button>
+        </div>
+
+        <div class="marketplace-chat">
+          <div class="chat-history" id="expChatHistory" style="height: 200px; margin-bottom: 5px;"></div>
+          <div id="expTypingIndicator" style="font-size: 0.8em; color: #aaa; margin-bottom: 10px; height: 15px;"></div>
+          <div class="chat-controls" style="display: flex; gap: 10px;">
+            <input type="text" id="expChatInput" placeholder="Message customer..." style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #fff;">
+            <button class="btn btn-primary" id="expSendBtn">Send</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Alert Modal -->
+  <div id="liveAlertModal" class="modal-overlay hidden" style="z-index: 10000; display: none; align-items: center; justify-content: center;">
+    <div class="modal-card card" style="max-width: 450px; border: 2px solid var(--danger); box-shadow: 0 0 30px var(--danger-glow); text-align: center;">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; justify-content: center;">
+        <h3 style="color: var(--danger); display: flex; align-items: center; gap: 8px;">🚨 New Critical Issue!</h3>
+      </div>
+      <div class="modal-content" style="padding-top: 15px;">
+        <p style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;" id="alertProblem">Problem Name</p>
+        <p style="color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;" id="alertAnalysis">Problem Description</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button id="alertOpenBtn" class="btn btn-primary" style="flex: 1; padding: 10px;">View Details</button>
+          <button id="alertCloseBtn" class="btn btn-secondary" style="padding: 10px;">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container for Real-time Notifications -->
+  <div id="toast-container"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/expert.js"></script>
+</body>
+</html>

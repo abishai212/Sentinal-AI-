@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal AI Problem Solver</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Ribbon -->
+  <nav class="top-nav">
+    <div class="logo">
+      <span class="dot"></span>
+      <h1>Sentinal AI</h1>
+    </div>
+    <div class="nav-actions">
+      <a href="landing.html" class="btn btn-secondary btn-small">⬅ Home</a>
+      <a href="expert.html" class="btn btn-secondary btn-small">Expert Dashboard ➜</a>
+    </div>
+  </nav>
+
+  <!-- Main Unified Workspace -->
+  <main class="dashboard-container">
+    
+    <div class="work-area">
+      <!-- Hybrid Input Panel -->
+      <section class="input-panel card">
+        <div class="panel-header">
+          <h2>Diagnostic Input Terminal</h2>
+          <p>Submit code, software errors, or upload a photograph of damaged hardware.</p>
+        </div>
+        
+        <div class="input-grid">
+          
+          <!-- Software Block -->
+          <div class="input-block code-block">
+            <label for="textInput">Software / Code / Logs</label>
+            <textarea id="textInput" spellcheck="false" placeholder="const foo = undefined;&#10;foo.invoke();&#10;&#10;// Uncaught TypeError..."></textarea>
+          </div>
+
+          <!-- Hardware Block -->
+          <div class="input-block hardware-block">
+            <label>Hardware Documentation</label>
+            <div class="upload-zone" onclick="document.getElementById('imageInput').click()">
+              <div class="upload-icon">📁</div>
+              <span>Click to Upload Image</span>
+              <p class="sub-text">PNG, JPG, JPEG</p>
+              <input type="file" id="imageInput" accept="image/*" class="hidden-input">
+            </div>
+            
+            <div id="imagePreviewContainer" class="hidden">
+              <img id="imagePreview" src="" alt="Hardware Preview">
+              <button class="btn btn-secondary btn-small" id="clearImageBtn">Clear Image</button>
+            </div>
+          </div>
+
+        </div>
+
+        <button class="btn btn-primary btn-master" id="analyzeBtn">Run Universal Analysis</button>
+        <div class="error-msg hidden" id="errorMsg">Please enter code or upload an image.</div>
+      </section>
+
+      <!-- Loading State HUD -->
+      <section id="loadingHUD" class="card loading-card hidden">
+        <div class="spinner"></div>
+        <h3 id="loadingTitle">Analyzing input...</h3>
+      </section>
+
+      <!-- Result Terminal -->
+      <section id="resultCard" class="card result-card hidden">
+        <div class="result-header">
+          <div class="title-pack">
+            <span class="badge" id="resType">TYPE</span>
+            <h2 id="resProblem">Problem Name</h2>
+          </div>
+          <div class="stats-pack">
+            <div class="stat-box"><span class="label">Confidence</span><strong id="resConfidence">0%</strong></div>
+            <div class="stat-box"><span class="label">Severity</span><strong id="resSeverity" class="high">High</strong></div>
+          </div>
+        </div>
+
+        <div class="analysis-grid">
+          <div class="analysis-col">
+            <h4>🧠 Technical Analysis</h4>
+            <ul id="resDocs" class="bullet-list"></ul>
+          </div>
+          <div class="analysis-col">
+            <h4>🔧 Recommended Solution</h4>
+            <ul id="resSteps" class="bullet-list success"></ul>
+          </div>
+        </div>
+
+      <!-- Hardware Metadata -->
+      <div id="hardwareMetadata" class="result-footer">
+        <div class="footer-item">
+          <strong>Risk:</strong> <span id="resRisk">Loading...</span>
+        </div>
+        <div class="footer-item">
+          <strong>Estimate:</strong> <span id="resEstimate">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Software Code Assistant Grid -->
+      <div id="softwareCodeGrid" class="analysis-grid code-mode hidden">
+        <div class="res-card full-width">
+          <h4>💡 Auto-Generated Code Fix</h4>
+          <div class="code-block-wrapper">
+            <pre><code id="resFixedCode" class="language-javascript"></code></pre>
+          </div>
+        </div>
+        <div class="res-card">
+          <h4>⚡ Optimization Suggestions</h4>
+          <ul id="resOptSuggestions"></ul>
+        </div>
+        <div class="res-card">
+          <h4>⚙️ Meta Metrics</h4>
+          <p class="metric-row"><strong>Difficulty Level:</strong> <span id="resDifficulty"></span></p>
+          <p class="metric-row"><strong>Fix Time:</strong> <span id="resFixTime"></span></p>
+        </div>
+      </div>
+
+      <!-- Marketplace Action -->
+      <div id="marketplaceActionBar" class="result-footer" style="justify-content: center; margin-top: 15px;">
+        <button id="requestExpertBtn" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 15px; box-shadow: 0 0 15px rgba(25, 118, 210, 0.5);">👨‍🔧 Request Expert Help</button>
+      </div>
+
+    </div>
+
+    <!-- Right Sidebar Assistant -->
+    <aside class="ai-assistant card">
+      <div class="assistant-header">
+        <h3>AI Assistant Context</h3>
+        <span class="status-indicator"></span>
+      </div>
+      <div id="chatHistory" class="chat-history">
+        <!-- Messages -->
+      </div>
+      <div id="typingIndicator" class="typing-indicator hidden">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="chat-controls">
+        <div class="question-menu-container" id="questionMenuContainer">
+          <select id="questionSelect" class="question-dropdown">
+            <option value="" disabled selected>Select a question from the menu...</option>
+            <option value="How do I repair this?">How do I repair this?</option>
+            <option value="Why did this happen?">Why did this happen?</option>
+            <option value="Is it safe to ignore?">Is it safe to ignore?</option>
+            <option value="What tools or skills do I need?">What tools or skills do I need?</option>
+            <option value="Explain the risk in simpler terms.">Explain the risk in simpler terms.</option>
+          </select>
+        </div>
+        <input type="text" id="chatInput" placeholder="Follow up question..." autocomplete="off">
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Expert Status Modal -->
+  <div id="expertModal" class="modal-overlay hidden">
+    <div class="modal-card card">
+      <div class="modal-header">
+        <h3>Expert Assistance Request</h3>
+        <button id="closeModalBtn" class="btn-close" style="background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="status-banner badge" id="expertStatusBanner" style="display: block; text-align: center; margin-bottom: 15px;">
+          Status: <span id="reqStatus">Pending... Searching for experts</span>
+        </div>
+        <div class="expert-info hidden" id="expertInfoSection" style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+          <p><strong>Expert Assigned:</strong> <span id="reqExpertName"></span></p>
+          <p><strong>Proposed Price:</strong> <span id="reqPrice"></span></p>
+        </div>
+        <div class="marketplace-chat hidden" id="marketplaceChat">
+          <div class="chat-history" id="mpChatHistory" style="height: 200px; margin-bottom: 5px;"></div>
+          <div id="mpTypingIndicator" style="font-size: 0.8em; color: #aaa; margin-bottom: 10px; height: 15px;"></div>
+          <div class="chat-controls" style="display: flex; gap: 10px;">
+            <input type="text" id="mpChatInput" placeholder="Message expert..." style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #fff;">
+            <button class="btn btn-primary" id="mpSendBtn">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
