@@ -143,7 +143,11 @@ const publicPath = path.join(__dirname, '../frontend');
 const uploadsPath = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsPath)) fs.mkdirSync(uploadsPath, { recursive: true });
 
-app.use(express.static(publicPath));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(publicPath, 'landing.html'));
+});
+
+app.use(express.static(publicPath, { index: 'landing.html' }));
 app.use('/uploads', express.static(uploadsPath));
 
 const uploadExtensionByMime = {
