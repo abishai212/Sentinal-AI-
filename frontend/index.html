@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostic Terminal — Sentinel AI</title>
+  <meta name="description" content="Instant engineering diagnostics, failure analysis, and verified specialist dispatch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <!-- Sticky Navy Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="landing.html" class="brand-link" aria-label="Sentinel AI Home">
+        <img src="assets/logo.png" class="brand-logo-img" alt="Sentinel AI">
+        <span class="brand-text">Sentinel Diagnostic Terminal</span>
+      </a>
+      <nav class="nav-group">
+        <a href="landing.html" class="nav-link">Home</a>
+        <a href="auth.html" class="nav-link">Specialist Portal</a>
+        <a href="admin.html" class="nav-link">Admin</a>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+    <div class="accent-line"></div>
+  </header>
+
+  <main class="container">
+    
+    <!-- Active Request Persistence Banner -->
+    <div id="restoredRequestBanner" class="card hidden" style="margin-top: var(--space-6); background-color: var(--color-teal-subtle); border-color: var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--color-navy);">Active Request In Progress:</strong>
+        <span id="restoredProblemTitle" style="color: var(--color-teal); margin-left: 6px;">Loading...</span>
+      </div>
+      <button class="btn btn-primary btn-small" onclick="viewActiveRequestModal()">Open Consultation Window</button>
+    </div>
+
+    <!-- 2-Column Responsive Workspace Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Input Tabs (Photo / Describe / Code / Voice) & Results -->
+      <div style="display: flex; flex-direction: column; gap: var(--space-6);">
+        
+        <!-- Input Terminal Card -->
+        <section class="card page-fade-up stagger-1">
+          <div style="margin-bottom: var(--space-4);">
+            <h2 style="font-size: 1.25rem;">Diagnostic Intake</h2>
+            <p style="font-size: var(--text-xs); margin-top: 2px;">Submit visual evidence, log signatures, or code exceptions for instant forensic analysis.</p>
+          </div>
+
+          <!-- Input Mode Tabs: Photo / Describe / Code / Voice -->
+          <div class="tab-nav">
+            <button class="tab-btn active" id="tabModePhoto" onclick="switchInputMode('photo')">
+              📷 Photo Intake
+            </button>
+            <button class="tab-btn" id="tabModeDescribe" onclick="switchInputMode('describe')">
+              📝 Describe Issue
+            </button>
+            <button class="tab-btn" id="tabModeCode" onclick="switchInputMode('code')">
+              💻 Code &amp; Logs
+            </button>
+            <button class="tab-btn" id="tabModeVoice" onclick="switchInputMode('voice')">
+              🎙️ Voice Note
+            </button>
+          </div>
+
+          <!-- Mode 1: Photo Dropzone -->
+          <div id="modePanelPhoto">
+            <div class="dropzone" id="uploadDropzone" onclick="document.getElementById('imageInput').click()" aria-label="Drop hardware photo here">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-slate);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <strong style="font-size: var(--text-sm);">Upload or drop hardware photograph</strong>
+              <span style="font-size: var(--text-xs); color: var(--color-slate);">PNG, JPG, or JPEG up to 10MB</span>
+              <input type="file" id="imageInput" accept="image/*" class="hidden">
+            </div>
+
+            <div id="imagePreviewContainer" class="hidden" style="margin-top: var(--space-3); text-align: center;">
+              <img id="imagePreview" src="" alt="Hardware Preview" style="max-height: 180px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); object-fit: contain;">
+              <div style="margin-top: var(--space-2);">
+                <button type="button" class="btn btn-secondary btn-small" id="clearImageBtn">Remove Image</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode 2 & 3: Text & Code Area -->
+          <div id="modePanelText" class="hidden">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="textInput" id="textInputLabel">Describe the problem or paste error trace</label>
+              <textarea id="textInput" placeholder="Describe the physical failure, pipe leak, burnt plug, or paste code runtime stack traces..."></textarea>
+            </div>
+          </div>
+
+          <!-- Mode 4: Voice Speech-to-Text Input -->
+          <div id="modePanelVoice" class="hidden">
+            <div style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-5); text-align: center;">
+              <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()">
+                🎙️ Start Speech Intake
+              </button>
+              <p id="voiceStatusText" style="font-size: var(--text-xs); margin-top: var(--space-2); color: var(--color-slate);">
+                Click to dictate your technical issue using browser speech recognition.
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-4); flex-wrap: wrap; gap: var(--space-3);">
+            <div id="errorMsg" class="hidden" style="color: var(--status-danger); font-size: var(--text-xs); font-weight: 500;">
+              Please provide an image, description, or code trace.
+            </div>
+            <button type="button" class="btn btn-primary" id="analyzeBtn" style="margin-left: auto;">
+              Run Diagnostics
+            </button>
+          </div>
+        </section>
+
+        <!-- AI Analysis Sequence Progress Card -->
+        <div id="loadingHUD" class="analysis-progress-card hidden" aria-live="polite">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="loadingStageTitle" style="font-size: var(--text-sm); color: var(--color-navy);">Reading intake parameters...</strong>
+            <span id="loadingPercentText" style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-teal);">25%</span>
+          </div>
+          <div class="progress-stages-bar">
+            <div class="progress-stages-fill" id="loadingProgressBar"></div>
+          </div>
+          <p style="font-size: var(--text-xs); color: var(--color-slate); margin-top: var(--space-2);">Cross-referencing failure topologies with engineering standards.</p>
+        </div>
+
+        <!-- Diagnosis Result Card -->
+        <section id="resultCard" class="result-card hidden">
+          
+          <!-- Severity Meter Band -->
+          <div id="severityBand" style="padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: var(--space-4); display: flex; justify-content: space-between; align-items: center; background-color: var(--status-pending-subtle); border-left: 4px solid var(--status-pending);">
+            <div>
+              <span style="font-size: var(--text-xs); text-transform: uppercase; font-weight: 600; color: var(--status-pending);">Severity Level</span>
+              <h3 id="resSeverityTitle" style="font-size: 1.15rem; color: var(--color-ink); margin-top: 2px;">Moderate</h3>
+            </div>
+            <div style="text-align: right;">
+              <span class="status-chip chip-accepted" id="resRecommendedCategory">Specialist</span>
+            </div>
+          </div>
+
+          <h2 id="resProblem" style="font-size: 1.35rem; margin-bottom: var(--space-1);">Fault Classification</h2>
+          <span id="resAiSource" class="status-chip chip-accepted" style="display: inline-block; margin-bottom: var(--space-2);">Offline estimate</span>
+          <p id="resRootCauseText" style="font-size: var(--text-sm); color: var(--color-slate); margin-bottom: var(--space-4);">Root cause details...</p>
+
+          <!-- Animated Confidence Bar -->
+          <div style="margin-bottom: var(--space-5);">
+            <div style="display: flex; justify-content: space-between; font-size: var(--text-xs); margin-bottom: 4px;">
+              <span id="resConfidenceLabel">Estimated confidence (offline)</span>
+              <strong id="resConfidence" style="font-family: var(--font-mono); color: var(--color-teal);">0%</strong>
+            </div>
+            <div class="confidence-bar-bg">
+              <div class="confidence-bar-fill" id="confidenceBarFill"></div>
+            </div>
+          </div>
+
+          <!-- Technical Analysis & Remediation Steps -->
+          <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-5); margin-bottom: var(--space-5);">
+            <div>
+              <h4 style="font-size: var(--text-sm); text-transform: uppercase; color: var(--color-navy); margin-bottom: var(--space-2);">Technical Observations</h4>
+              <ul id="resDocs" style="list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 4px; font-size: var(--text-sm); color: var(--color-slate);"></ul>
+            </div>
+            <div>
+              <h4 style="font-size: var(--text-sm); text-transform: uppercase; color: var(--color-navy); margin-bottom: var(--space-2);">Numbered Remediation Plan</h4>
+              <ol id="resSteps" style="padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: var(--text-sm); color: var(--color-slate);"></ol>
+            </div>
+          </div>
+
+          <!-- Cost Summary & Safety Callout -->
+          <div style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-4); margin-bottom: var(--space-5); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3);">
+            <div>
+              <span style="font-size: var(--text-xs); color: var(--color-slate); text-transform: uppercase;">Estimated Cost (INR)</span>
+              <div id="resCostEstimate" style="font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 700; color: var(--color-teal); margin-top: 2px;">₹0</div>
+            </div>
+            <div>
+              <span style="font-size: var(--text-xs); color: var(--color-slate); text-transform: uppercase;">Action Urgency</span>
+              <div id="resUrgency" style="font-size: var(--text-sm); font-weight: 600; color: var(--color-ink); margin-top: 2px;">Fix within 24h</div>
+            </div>
+            <div>
+              <span style="font-size: var(--text-xs); color: var(--color-slate); text-transform: uppercase;">Execution</span>
+              <div id="resDifficulty" style="font-size: var(--text-sm); font-weight: 600; color: var(--color-ink); margin-top: 2px;">Moderate</div>
+            </div>
+          </div>
+
+          <!-- Software Extra Block -->
+          <div id="softwareCodeGrid" class="hidden" style="margin-bottom: var(--space-5);">
+            <span style="font-size: var(--text-xs); color: var(--color-slate); text-transform: uppercase; font-weight: 600;">Corrected Code Implementation</span>
+            <pre style="background-color: var(--color-navy); color: var(--color-mint); padding: var(--space-3); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); overflow-x: auto; margin-top: 4px;"><code id="resFixedCode"></code></pre>
+          </div>
+
+          <p id="diagnosisActionNote" class="hidden" role="status" style="margin-bottom: var(--space-3); color: var(--color-slate); font-size: var(--text-sm);"></p>
+          <!-- Buttons: Connect Specialist & Export Report -->
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="downloadPdfBtn">
+              📄 Export Official Report
+            </button>
+            <button class="btn btn-primary" id="requestExpertBtn">
+              Connect to a Specialist ➜
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+
+      <!-- Right Column: Sticky "Your Request" Panel with Stepper, Matched Expert, and Escrow -->
+      <aside class="sticky-request-panel">
+        <div class="card page-fade-up stagger-2">
+          
+          <div style="margin-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-3);">
+            <h3 style="font-size: 1rem;">Service Request Lifecycle</h3>
+            <span id="sideTicketId" style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-slate);">Awaiting submission</span>
+          </div>
+
+          <!-- Stepper -->
+          <div class="stepper-container">
+            <div class="stepper-track-bg"></div>
+            <div class="stepper-track-fill" id="stepperProgressFill" style="width: 0%;"></div>
+
+            <div class="step-node active" id="stepNode1">
+              <div class="step-circle">1</div>
+              <span class="step-title">Describe</span>
+            </div>
+            <div class="step-node" id="stepNode2">
+              <div class="step-circle">2</div>
+              <span class="step-title">Diagnose</span>
+            </div>
+            <div class="step-node" id="stepNode3">
+              <div class="step-circle">3</div>
+              <span class="step-title">Matched</span>
+            </div>
+            <div class="step-node" id="stepNode4">
+              <div class="step-circle">4</div>
+              <span class="step-title">Resolved</span>
+            </div>
+          </div>
+
+          <!-- Matched Expert Card (Visible when assigned) -->
+          <div id="sideExpertCard" class="hidden" style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="status-chip chip-accepted" id="sideExpertCategory">Specialist</span>
+              <span id="sideExpertRating" style="font-size: var(--text-xs); font-weight: 600;">★ 5.0</span>
+            </div>
+            <h4 id="sideExpertName" style="font-size: 0.95rem;">Assigned Specialist</h4>
+            <p id="sideExpertMeta" style="font-size: var(--text-xs); color: var(--color-slate); margin-top: 2px;">Verified Field Contractor</p>
+          </div>
+
+          <!-- Escrow Status Box -->
+          <div id="sideEscrowBox" style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-3); font-size: var(--text-xs);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong>Sentinel Escrow</strong>
+              <span class="status-chip chip-pending" id="sideEscrowStatus">UNPAID</span>
+            </div>
+            <p id="sideEscrowDesc" style="color: var(--color-slate);">Escrow deposit is held securely until you confirm resolution.</p>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div style="margin-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2);">
+            <button class="btn btn-secondary btn-small hidden" id="sideOpenConsultationBtn" onclick="viewActiveRequestModal()">
+              Open Consultation Window
+            </button>
+          </div>
+
+        </div>
+
+        <!-- AI Diagnostic Clarifications Chat Accordion -->
+        <div class="card" style="margin-top: var(--space-4); padding: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+            <h4 style="font-size: 0.9rem;">Diagnostic Inquiries</h4>
+            <span style="font-size: var(--text-xs); color: var(--color-slate);">Instant Context</span>
+          </div>
+          
+          <div class="chat-messages" id="chatHistory" style="height: 180px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-bottom: var(--space-2);"></div>
+          
+          <div style="display: flex; gap: var(--space-2);">
+            <input type="text" id="chatInput" placeholder="Ask clarification..." style="padding: 6px 10px; font-size: var(--text-xs);">
+            <button class="btn btn-secondary btn-small" id="chatSendBtn">Ask</button>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- Specialist Consultation & Escrow Modal -->
+  <div id="expertModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalReqTitle">
+    <div class="modal-dialog">
+      
+      <div class="modal-header">
+        <div>
+          <h3 id="modalReqTitle" style="font-size: 1.15rem;">Specialist Consultation</h3>
+          <span id="modalReqSub" style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-slate);">Ticket #...</span>
+        </div>
+        <button class="btn-close" id="closeModalBtn" onclick="closeModal('expertModal')" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-content" style="display: flex; flex-direction: column; gap: var(--space-4);">
+        
+        <!-- Live Dispatch Status Banner -->
+        <div id="expertStatusBanner" style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="reqStatusBadge" class="status-chip chip-pending">PENDING</span>
+            <span id="reqCategoryPill" style="font-size: var(--text-xs); font-weight: 500;">Category</span>
+          </div>
+          <p id="reqStatus" style="font-size: var(--text-sm); margin-top: 6px; color: var(--color-ink);">
+            Dispatching request to verified specialists in your area...
+          </p>
+        </div>
+
+        <!-- Assigned Specialist Card -->
+        <div id="expertInfoSection" class="hidden" style="background-color: var(--color-white); border: 1px solid var(--color-border); border-left: 3px solid var(--color-teal); border-radius: var(--radius-sm); padding: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h4 id="expName" style="font-size: 0.95rem;">Specialist Name</h4>
+              <p id="expSkills" style="font-size: var(--text-xs); color: var(--color-slate);">Category &amp; Area</p>
+            </div>
+            <div style="text-align: right;">
+              <span id="expRating" style="font-size: var(--text-xs); font-weight: 600;">★ 5.0</span>
+              <p id="expQuotePrice" style="font-size: var(--text-xs); color: var(--color-teal); font-weight: 600;">Quote: ₹1,500</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escrow Protection Area -->
+        <div id="escrowCard" class="hidden" style="background-color: var(--color-off-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong>Sentinel Escrow Security</strong>
+            <span id="escrowStatusBadge" class="status-chip chip-pending">UNPAID</span>
+          </div>
+          <p id="escrowDescription" style="font-size: var(--text-xs); color: var(--color-slate); margin-bottom: var(--space-3);">
+            Deposit payment to lock in consultation. Funds are securely held in escrow until you verify the work is resolved.
+          </p>
+          <div id="escrowActionArea" style="display: flex; gap: var(--space-2);">
+            <button class="btn btn-accent btn-small" id="depositEscrowBtn" onclick="depositEscrow()">Deposit Escrow (₹1,500)</button>
+            <button class="btn btn-secondary btn-small hidden" id="releaseEscrowBtn" onclick="releaseEscrow()" style="color: var(--status-resolved);">Release Payment to Specialist</button>
+          </div>
+        </div>
+
+        <!-- WebRTC Video Consultation Stage -->
+        <div id="custVideoStage" class="video-stage hidden">
+          <div class="video-status-overlay">
+            <span class="video-status-dot"></span>
+            <span id="custCallStatusText">Waiting for specialist...</span>
+          </div>
+          <video id="custRemoteVideo" class="remote-stream" autoplay playsinline></video>
+          <div class="local-pip">
+            <video id="custLocalVideo" class="local-stream" autoplay playsinline muted></video>
+          </div>
+          <div class="video-controls">
+            <button class="btn btn-secondary btn-small" id="custMicBtn" onclick="toggleCustomerMic()">Mute Mic</button>
+            <button class="btn btn-secondary btn-small" id="custScreenBtn" onclick="toggleCustomerScreenShare()">🖥️ Share Screen</button>
+            <button class="btn btn-danger btn-small" onclick="hangupCustomerCall()">End Call</button>
+          </div>
+        </div>
+
+        <!-- Live Direct Chat Window -->
+        <div id="marketplaceChat" class="chat-window hidden" style="height: 240px;">
+          <div class="chat-messages" id="mpChatHistory"></div>
+          <div id="mpTypingIndicator" style="font-size: var(--text-xs); color: var(--color-slate); padding: 0 var(--space-4);"></div>
+          <div class="chat-input-bar">
+            <input type="text" id="mpChatInput" placeholder="Message the assigned specialist directly...">
+            <button class="btn btn-primary btn-small" id="mpSendBtn">Send</button>
+            <button class="btn btn-secondary btn-small hidden" id="custCallBtn" onclick="startCustomerCall()">📹 Video Call</button>
+          </div>
+        </div>
+
+        <!-- Rating & Review Panel -->
+        <div id="reviewPanel" class="hidden" style="padding: var(--space-4); background-color: var(--color-off-white); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+          <h4 style="font-size: var(--text-sm); margin-bottom: 6px;">Rate Specialist Resolution</h4>
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3);">
+            <select id="ratingScore" style="width: 130px; font-size: var(--text-xs);">
+              <option value="5">★★★★★ (5/5)</option>
+              <option value="4">★★★★☆ (4/5)</option>
+              <option value="3">★★★☆☆ (3/5)</option>
+              <option value="2">★★☆☆☆ (2/5)</option>
+              <option value="1">★☆☆☆☆ (1/5)</option>
+            </select>
+            <input type="text" id="reviewComment" placeholder="Write feedback..." style="flex: 1; font-size: var(--text-xs);">
+          </div>
+          <button class="btn btn-primary btn-small" onclick="submitReview()">Submit Rating</button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/ui-motion.js"></script>
+  <script src="js/report-template.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    // Tab switching for input modes (Photo / Describe / Code / Voice)
+    function switchInputMode(mode) {
+      document.querySelectorAll('.tab-nav .tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('modePanelPhoto').classList.add('hidden');
+      document.getElementById('modePanelText').classList.add('hidden');
+      document.getElementById('modePanelVoice').classList.add('hidden');
+
+      if (mode === 'photo') {
+        document.getElementById('tabModePhoto').classList.add('active');
+        document.getElementById('modePanelPhoto').classList.remove('hidden');
+      } else if (mode === 'describe') {
+        document.getElementById('tabModeDescribe').classList.add('active');
+        document.getElementById('modePanelText').classList.remove('hidden');
+        document.getElementById('textInputLabel').textContent = 'Describe the physical failure or issue';
+        document.getElementById('textInput').placeholder = 'Provide details regarding location, visible leaks, unusual sounds, or electrical sparks...';
+      } else if (mode === 'code') {
+        document.getElementById('tabModeCode').classList.add('active');
+        document.getElementById('modePanelText').classList.remove('hidden');
+        document.getElementById('textInputLabel').textContent = 'Code snippet, terminal error, or runtime stack trace';
+        document.getElementById('textInput').placeholder = 'while(true) { ... }\nTypeError: Cannot read properties of undefined...';
+      } else if (mode === 'voice') {
+        document.getElementById('tabModeVoice').classList.add('active');
+        document.getElementById('modePanelVoice').classList.remove('hidden');
+      }
+    }
+
+    // Voice recognition helper
+    let recognition = null;
+    let isRecording = false;
+    function toggleVoiceRecording() {
+      const btn = document.getElementById('voiceRecordBtn');
+      const statusText = document.getElementById('voiceStatusText');
+
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        showToast('Speech recognition not supported in this browser.', 'error');
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!isRecording) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+          isRecording = true;
+          btn.textContent = '⏹️ Stop Dictation';
+          btn.classList.add('btn-danger');
+          statusText.textContent = 'Listening... Speak clearly into your microphone.';
+        };
+
+        recognition.onresult = (e) => {
+          const transcript = e.results[0][0].transcript;
+          document.getElementById('textInput').value = transcript;
+          switchInputMode('describe');
+          showToast('Speech transcription captured.', 'success');
+        };
+
+        recognition.onerror = (e) => {
+          showToast('Voice intake error: ' + e.error, 'error');
+        };
+
+        recognition.onend = () => {
+          isRecording = false;
+          btn.textContent = '🎙️ Start Speech Intake';
+          btn.classList.remove('btn-danger');
+          statusText.textContent = 'Dictation complete.';
+        };
+
+        recognition.start();
+      } else {
+        if (recognition) recognition.stop();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Specialist Authentication — Sentinel AI</title>
+  <meta name="description" content="Sign in or register as a certified specialist on the Sentinel AI platform.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Sticky Navy Header with Real Brand Logo & Theme Toggle -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="landing.html" class="brand-link" aria-label="Sentinel AI Home">
+        <img src="assets/logo.png" class="brand-logo-img" alt="Sentinel AI">
+        <span class="brand-text">Sentinel AI</span>
+      </a>
+      <nav class="nav-group">
+        <a href="landing.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link">Diagnostic Terminal</a>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+    <div class="accent-line"></div>
+  </header>
+
+  <!-- Split Layout: Brand Panel on Left, Form on Right -->
+  <div class="auth-split-wrapper">
+    
+    <!-- Brand Panel Left -->
+    <aside class="auth-brand-panel blueprint-grid">
+      <div>
+        <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-8);">
+          <img src="assets/logo.png" style="height: 38px; width: auto;" alt="Sentinel AI">
+          <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: #ffffff;">Sentinel Contractor Network</span>
+        </div>
+
+        <h2 style="color: #ffffff; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.3;">
+          Field service engineering, backed by automated diagnostics.
+        </h2>
+        <p style="color: rgba(255, 255, 255, 0.75); margin-top: var(--space-3); font-size: var(--text-sm);">
+          Connect directly with residential and commercial property clients with pre-triaged diagnostic assessments.
+        </p>
+
+        <div style="margin-top: var(--space-8);">
+          <div class="auth-benefit-item">
+            <span style="color: var(--color-mint); font-size: 1.25rem;">✓</span>
+            <div>
+              <strong style="color: #ffffff; font-size: var(--text-sm);">Guaranteed Escrow Protection</strong>
+              <p style="color: rgba(255, 255, 255, 0.7); font-size: var(--text-xs); margin-top: 2px;">
+                Customer funds are held in escrow before you deploy.
+              </p>
+            </div>
+          </div>
+
+          <div class="auth-benefit-item">
+            <span style="color: var(--color-mint); font-size: 1.25rem;">✓</span>
+            <div>
+              <strong style="color: #ffffff; font-size: var(--text-sm);">Pre-Triaged Diagnostic Evidence</strong>
+              <p style="color: rgba(255, 255, 255, 0.7); font-size: var(--text-xs); margin-top: 2px;">
+                Receive photographs, root-cause analysis, and part requirements up-front.
+              </p>
+            </div>
+          </div>
+
+          <div class="auth-benefit-item">
+            <span style="color: var(--color-mint); font-size: 1.25rem;">✓</span>
+            <div>
+              <strong style="color: #ffffff; font-size: var(--text-sm);">Integrated P2P Inspection</strong>
+              <p style="color: rgba(255, 255, 255, 0.7); font-size: var(--text-xs); margin-top: 2px;">
+                Live WebRTC video conferencing and screen sharing directly in the workspace.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: var(--text-xs); color: rgba(255, 255, 255, 0.5); border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--space-4); margin-top: var(--space-6);">
+        ISO-Audited Technical Platform • Sentinel AI
+      </div>
+    </aside>
+
+    <!-- Auth Form Panel Right -->
+    <main class="auth-form-panel">
+      <div class="card auth-form-card">
+        
+        <div style="margin-bottom: var(--space-5);">
+          <h2 style="font-size: 1.4rem;">Specialist Access</h2>
+          <p style="font-size: var(--text-xs); margin-top: 2px;">Sign in to your dashboard or submit credentials for review.</p>
+        </div>
+
+        <!-- Tabs: Login vs Register -->
+        <div class="tab-nav">
+          <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+          <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Register Application</button>
+        </div>
+
+        <div id="authAlert" class="hidden" style="padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: var(--space-4); font-size: var(--text-sm);"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Registered Email Address</label>
+            <input type="email" id="loginEmail" required placeholder="name@domain.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Account Password</label>
+            <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-2);" id="loginBtn">
+            Sign In to Workspace
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="regName">Full Legal Name</label>
+            <input type="text" id="regName" required placeholder="Jane Doe">
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" required placeholder="name@domain.com">
+          </div>
+          <div class="form-group">
+            <label for="regPhone">Mobile Phone (SMS Dispatch Alerts)</label>
+            <input type="tel" id="regPhone" required placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label for="regPassword">Create Password</label>
+            <input type="password" id="regPassword" required minlength="6" placeholder="At least 6 characters">
+          </div>
+          <div class="form-group">
+            <label for="regCategory">Technical Specialty Domain</label>
+            <select id="regCategory" required>
+              <option value="Plumber">Plumber (Pressure pipes, joint seals, drainage)</option>
+              <option value="Electrician">Electrician (Switchboards, wiring, appliances)</option>
+              <option value="Mobile Technician">Mobile Technician (Displays, digitizers, logic boards)</option>
+              <option value="Software Developer" selected>Software Developer (Runtime bugs, memory leaks)</option>
+              <option value="Cybersecurity Specialist">Cybersecurity Specialist (Malware, payload containment)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="regExperience">Years of Professional Field Experience</label>
+            <input type="number" id="regExperience" min="1" max="50" value="3" required>
+          </div>
+          <div class="form-group">
+            <label for="regServiceArea">Service Region / City</label>
+            <input type="text" id="regServiceArea" placeholder="e.g. Delhi NCR or Remote">
+          </div>
+          <div class="form-group">
+            <label for="regBio">Professional Credentials / Certifications</label>
+            <textarea id="regBio" placeholder="Detail licensing, tools owned, and technical qualifications..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-2);" id="registerBtn">
+            Submit Application
+          </button>
+        </form>
+
+      </div>
+    </main>
+
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/ui-motion.js"></script>
+  <script>
+    function switchAuthTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('tabLogin').classList.toggle('active', isLogin);
+      document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+      clearAuthAlert();
+    }
+
+    function showAuthAlert(message, isSuccess = false) {
+      const el = document.getElementById('authAlert');
+      el.style.backgroundColor = isSuccess ? 'var(--status-resolved-subtle)' : 'var(--status-danger-subtle)';
+      el.style.color = isSuccess ? 'var(--status-resolved)' : 'var(--status-danger)';
+      el.style.border = `1px solid ${isSuccess ? 'var(--status-resolved-border)' : 'var(--status-danger-border)'}`;
+      el.textContent = message;
+      el.classList.remove('hidden');
+    }
+
+    function clearAuthAlert() {
+      const el = document.getElementById('authAlert');
+      el.classList.add('hidden');
+      el.textContent = '';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearAuthAlert();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+
+      const res = await apiFetch('/api/expert/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Sign In to Workspace';
+
+      if (res.ok && res.data.success) {
+        localStorage.setItem('sentinel_expert_token', res.data.token);
+        localStorage.setItem('sentinel_expert_user', JSON.stringify(res.data.expert));
+        window.location.href = 'expert.html';
+      } else {
+        showAuthAlert(res.data.error || 'Invalid email or password.');
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      clearAuthAlert();
+      const payload = {
+        name: document.getElementById('regName').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        phone: document.getElementById('regPhone').value.trim(),
+        password: document.getElementById('regPassword').value,
+        category: document.getElementById('regCategory').value,
+        experience: Number(document.getElementById('regExperience').value),
+        serviceArea: document.getElementById('regServiceArea').value.trim(),
+        bio: document.getElementById('regBio').value.trim()
+      };
+
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting credentials...';
+
+      const res = await apiFetch('/api/expert/signup', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+
+      if (res.ok && res.data.success) {
+        showAuthAlert('Application submitted successfully! Please sign in with your credentials.', true);
+        setTimeout(() => switchAuthTab('login'), 1200);
+      } else {
+        showAuthAlert(res.data.error || 'Registration failed.');
+      }
+    }
+  </script>
+</body>
+</html>

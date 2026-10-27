@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel AI — Diagnostic & Technical Resolution Platform</title>
+  <meta name="description" content="Technical problem-solving instrument combining instant multimodal diagnostics with verified engineering specialists.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Sticky Navy Header with Real Brand Logo & Theme Toggle -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="landing.html" class="brand-link" aria-label="Sentinel AI Home">
+        <img src="assets/logo.png" class="brand-logo-img" alt="Sentinel AI">
+        <span class="brand-text">Sentinel AI</span>
+      </a>
+      <nav class="nav-group" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link">Diagnostic Terminal</a>
+        <a href="auth.html" class="nav-link">Specialist Portal</a>
+        <a href="admin.html" class="nav-link">Administration</a>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+    <div class="accent-line"></div>
+  </header>
+
+  <main>
+    
+    <!-- Hero Section with Blueprint Grid -->
+    <section class="landing-hero blueprint-grid">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <div class="hero-content page-fade-up stagger-1">
+            <span class="status-chip chip-accepted" style="width: fit-content;">Engineering Incident Resolution</span>
+            <h1 class="hero-tagline">On-demand technical diagnostics and verified specialist dispatch.</h1>
+            <p class="hero-subtext">
+              Submit hardware failure photographs or runtime code traces. Receive an immediate forensic engineering analysis, itemized repair cost estimation, and direct connection to licensed field specialists.
+            </p>
+            <div class="hero-cta-group">
+              <a href="index.html" class="btn btn-primary">Open Diagnostic Terminal</a>
+              <a href="auth.html" class="btn btn-secondary">Apply as Specialist</a>
+            </div>
+          </div>
+
+          <!-- Static, Well-Drawn Product Preview (Diagnosis Card) -->
+          <div class="preview-diagnosis-card page-fade-up stagger-3" aria-label="Sample Diagnostic Assessment">
+            <div class="preview-badge-row">
+              <span class="status-chip chip-danger">Critical Severity</span>
+              <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-slate);">SAI-2026-PREVIEW</span>
+            </div>
+            
+            <h3 style="font-size: 1.15rem; margin-bottom: 6px;">PVC Pressure Pipe Joint Rupture</h3>
+            <p style="font-size: var(--text-xs); color: var(--color-slate);">Sub-surface pressure surge causing solvent boundary breach.</p>
+            
+            <div style="margin-top: var(--space-3);">
+              <div style="display: flex; justify-content: space-between; font-size: var(--text-xs);">
+                <span>Diagnostic confidence</span>
+                <strong style="color: var(--color-teal); font-family: var(--font-mono);">98.4%</strong>
+              </div>
+              <div class="preview-meter-bar">
+                <div class="preview-meter-fill"></div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--color-border); font-size: var(--text-xs);">
+              <div>
+                <span style="color: var(--color-slate);">Domain</span><br>
+                <strong>Plumbing Systems</strong>
+              </div>
+              <div>
+                <span style="color: var(--color-slate);">Estimated Cost</span><br>
+                <strong style="font-family: var(--font-mono); color: var(--color-teal);">₹1,800 - ₹3,500</strong>
+              </div>
+            </div>
+
+            <div style="margin-top: var(--space-3); padding: 8px 10px; background-color: var(--color-off-white); border-radius: var(--radius-sm); font-size: var(--text-xs); display: flex; align-items: center; justify-content: space-between;">
+              <span style="color: var(--color-slate);">Assigned Contractor</span>
+              <strong style="color: var(--color-ink);">Verified Specialist Dispatched</strong>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Numbered 3-Step Process -->
+    <section class="container" style="padding: var(--space-10) var(--space-4);">
+      <div style="text-align: center; max-width: 620px; margin: 0 auto var(--space-6);" class="reveal-on-scroll">
+        <h2>Structured 3-step resolution</h2>
+        <p>A systematic workflow designed to diagnose, protect, and resolve technical faults.</p>
+      </div>
+
+      <div class="step-grid-3">
+        <div class="step-card reveal-on-scroll">
+          <span class="step-number-tag">STEP 01</span>
+          <h3>Ingestion &amp; Heuristics</h3>
+          <p>Upload a photograph of damaged physical hardware or paste raw runtime exception logs. Our diagnostic heuristics map the failure topology.</p>
+        </div>
+
+        <div class="step-card reveal-on-scroll">
+          <span class="step-number-tag">STEP 02</span>
+          <h3>Audit &amp; Dispatch</h3>
+          <p>Review the technical root cause, safety containment precautions, and cost estimate. The system dispatches the ticket directly to approved contractors in your area.</p>
+        </div>
+
+        <div class="step-card reveal-on-scroll">
+          <span class="step-number-tag">STEP 03</span>
+          <h3>Escrow &amp; Resolution</h3>
+          <p>Collaborate via WebRTC video calls and screen sharing. Funds are held in escrow until you confirm the repair is fully resolved.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two Audience Sections -->
+    <section class="container reveal-on-scroll">
+      <div class="audience-split">
+        <div class="card" style="border-left: 3px solid var(--color-teal);">
+          <span class="status-chip chip-accepted" style="margin-bottom: var(--space-2);">For Property Owners &amp; Teams</span>
+          <h3>Immediate clarity when systems fail</h3>
+          <p style="margin-top: var(--space-2);">
+            Stop guessing repair costs or risking unsafe electrical or plumbing hazards. Get an engineering assessment in seconds and hire certified technicians with 100% escrow protection.
+          </p>
+          <div style="margin-top: var(--space-4);">
+            <a href="index.html" class="btn btn-primary btn-small">Start a Diagnostic</a>
+          </div>
+        </div>
+
+        <div class="card" style="border-left: 3px solid var(--color-mint);">
+          <span class="status-chip chip-resolved" style="margin-bottom: var(--space-2);">For Certified Specialists</span>
+          <h3>Receive qualified, pre-diagnosed service tickets</h3>
+          <p style="margin-top: var(--space-2);">
+            Eliminate wasted on-site diagnostic trips. Receive tickets with photographs, root cause indicators, and guaranteed escrow deposit protection before you deploy.
+          </p>
+          <div style="margin-top: var(--space-4);">
+            <a href="auth.html" class="btn btn-secondary btn-small">Apply as Contractor</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Strip -->
+    <section class="container reveal-on-scroll">
+      <div class="trust-strip">
+        <div>
+          <h4 style="font-size: var(--text-lg); color: var(--color-navy); font-family: var(--font-mono);">100% Escrow</h4>
+          <p style="font-size: var(--text-xs); margin-top: 2px;">Funds released only upon customer confirmation</p>
+        </div>
+        <div>
+          <h4 style="font-size: var(--text-lg); color: var(--color-navy); font-family: var(--font-mono);">Vetted Contractors</h4>
+          <p style="font-size: var(--text-xs); margin-top: 2px;">Admin verified credentials and experience</p>
+        </div>
+        <div>
+          <h4 style="font-size: var(--text-lg); color: var(--color-navy); font-family: var(--font-mono);">P2P WebRTC Video</h4>
+          <p style="font-size: var(--text-xs); margin-top: 2px;">Live camera inspection &amp; screen sharing</p>
+        </div>
+        <div>
+          <h4 style="font-size: var(--text-lg); color: var(--color-navy); font-family: var(--font-mono);">Certified Reports</h4>
+          <p style="font-size: var(--text-xs); margin-top: 2px;">Multi-page signed engineering audits with QR</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="container reveal-on-scroll">
+      <div style="text-align: center; margin-bottom: var(--space-6);">
+        <h2>Frequently Asked Questions</h2>
+        <p>Common questions regarding diagnostics, pricing, and specialist verification.</p>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-trigger" onclick="toggleFaq(this)">
+            <span>How does the automated diagnostic engine identify faults?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-body">
+            <p>The engine analyzes uploaded photographs for material stress patterns, ruptured seals, scorch marks, and crack topologies, or parses runtime stack traces against known software defects.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" onclick="toggleFaq(this)">
+            <span>How does Sentinel Escrow protect my payment?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-body">
+            <p>When an expert claims your ticket, funds are secured in escrow. The specialist can see that funds are locked, but cannot withdraw them until you review the fix and click Release Payment.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" onclick="toggleFaq(this)">
+            <span>Can I generate an official audit report for insurance or records?</span>
+            <span>+</span>
+          </button>
+          <div class="faq-body">
+            <p>Yes. Both customers and specialists can export an official multi-page A4 engineering report with itemized INR costs, safety precautions, digital signature, and verification QR code.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Clean Footer -->
+  <footer style="border-top: 1px solid var(--color-border); background-color: var(--color-white); padding: var(--space-8) 0; margin-top: var(--space-12);">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
+      <div>
+        <strong style="color: var(--color-ink);">Sentinel AI Engineering Platform</strong>
+        <p style="font-size: var(--text-xs); margin-top: 2px;">Calm technical diagnostic instruments and field service marketplace.</p>
+      </div>
+      <div style="display: flex; gap: var(--space-4); font-size: var(--text-sm);">
+        <a href="index.html">Diagnostic Solver</a>
+        <a href="auth.html">Specialist Portal</a>
+        <a href="admin.html">Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/shared.js"></script>
+  <script src="js/ui-motion.js"></script>
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      item.classList.toggle('active');
+      const icon = btn.querySelector('span:last-child');
+      icon.textContent = item.classList.contains('active') ? '−' : '+';
+    }
+  </script>
+</body>
+</html>

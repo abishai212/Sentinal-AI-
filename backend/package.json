@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "ai:doctor": "node scripts/ai-doctor.js",
+    "test:ai": "node --test aiEngine.test.js tests/ai-engine-hardening.test.js",
+    "test:live": "node tests/live-ai.js",
+    "verify": "node --check aiEngine.js && node --check categories.js && node --check server.js && node --check scripts/ai-doctor.js && node --check ../frontend/js/script.js && node --test && node scripts/ai-doctor.js --allow-missing-key"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.4.1",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.5",
+    "socket.io": "^4.8.3",
+    "tesseract.js": "^7.0.0",
+    "twilio": "^5.13.1"
+  }
+}

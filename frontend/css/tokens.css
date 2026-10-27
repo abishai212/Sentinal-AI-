@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Sentinel AI — Design Tokens & Theme Engine
+   Language: Calm Engineering Instrument
+   ========================================================================== */
+
+:root {
+  /* Color Palette — Light Mode (Default) */
+  --color-navy: #0b1f33;          /* Header, sidebar, primary buttons */
+  --color-navy-hover: #071524;
+  --color-ink: #1b2a35;           /* Primary text */
+  --color-slate: #5d6f7c;         /* Secondary text */
+  --color-mint: #7ee8a8;          /* Success & single accent */
+  --color-mint-subtle: #ebfbf2;
+  --color-mint-border: #bbf3d2;
+  --color-teal: #2a8fa8;          /* Links, focus, secondary accent */
+  --color-teal-hover: #22758b;
+  --color-teal-subtle: #eaf5f8;
+  --color-off-white: #f5f7f6;     /* Page background */
+  --color-white: #ffffff;         /* Cards, surfaces */
+  --color-border: #e3e8e6;        /* Standard 1px borders */
+  --color-border-strong: #c8d1ce;
+
+  /* Status Tokens */
+  --status-pending: #b7791f;      /* Pending amber */
+  --status-pending-subtle: #fef7ec;
+  --status-pending-border: #fbd38d;
+  --status-accepted: #2a8fa8;     /* Accepted teal */
+  --status-accepted-subtle: #eaf5f8;
+  --status-accepted-border: #a0d4e2;
+  --status-resolved: #15803d;     /* Resolved green */
+  --status-resolved-subtle: #eef9f2;
+  --status-resolved-border: #a7f3d0;
+  --status-danger: #b42318;       /* Danger / critical red */
+  --status-danger-subtle: #fef3f2;
+  --status-danger-border: #fecdca;
+
+  /* Typography Scale */
+  --font-heading: 'Sora', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: 40px;
+  --text-3xl: 56px;
+
+  /* Spacing Grid (4/8px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radii (8-12px consistent) */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+
+  /* Shadows (Soft Layered) */
+  --shadow-sm: 0 1px 2px rgba(11, 31, 51, 0.04), 0 1px 3px rgba(11, 31, 51, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(11, 31, 51, 0.05), 0 2px 4px -2px rgba(11, 31, 51, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(11, 31, 51, 0.06), 0 4px 6px -4px rgba(11, 31, 51, 0.03);
+
+  /* Motion Tokens (Limited, Purposeful, Performant) */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 450ms;
+
+  /* Layout Container */
+  --container-max: 1200px;
+}
+
+/* ==========================================================================
+   Dark Theme (Navy Surfaces — Never Pure Black)
+   ========================================================================== */
+[data-theme="dark"] {
+  --color-navy: #0d2740;
+  --color-navy-hover: #123354;
+  --color-ink: #f0f4f8;
+  --color-slate: #94a7b7;
+  --color-mint: #7ee8a8;
+  --color-mint-subtle: rgba(126, 232, 168, 0.12);
+  --color-mint-border: rgba(126, 232, 168, 0.3);
+  --color-teal: #3ab0ce;
+  --color-teal-hover: #52bfdb;
+  --color-teal-subtle: rgba(58, 176, 206, 0.12);
+  --color-off-white: #081624;     /* Deep navy background */
+  --color-white: #0f2438;         /* Card / panel navy surface */
+  --color-border: #1a3650;
+  --color-border-strong: #234768;
+
+  --status-pending: #d69e2e;
+  --status-pending-subtle: rgba(214, 158, 46, 0.12);
+  --status-pending-border: rgba(214, 158, 46, 0.3);
+  --status-accepted: #3ab0ce;
+  --status-accepted-subtle: rgba(58, 176, 206, 0.12);
+  --status-accepted-border: rgba(58, 176, 206, 0.3);
+  --status-resolved: #34d399;
+  --status-resolved-subtle: rgba(52, 211, 153, 0.12);
+  --status-resolved-border: rgba(52, 211, 153, 0.3);
+  --status-danger: #f87171;
+  --status-danger-subtle: rgba(248, 113, 113, 0.12);
+  --status-danger-border: rgba(248, 113, 113, 0.3);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}

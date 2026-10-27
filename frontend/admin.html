@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrative Console — Sentinel AI</title>
+  <meta name="description" content="Administrative console for managing specialists, tickets, and system metrics.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="landing.html" class="brand-link" aria-label="Sentinel AI home">
+        <img src="assets/logo.png" class="brand-logo-img" alt="Sentinel AI">
+        <span class="brand-text">Administrative Console</span>
+      </a>
+      <nav class="nav-group" aria-label="Primary navigation">
+        <a href="landing.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link">Customer Portal</a>
+        <a href="auth.html" class="nav-link">Specialist Portal</a>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+    <div class="accent-line"></div>
+  </header>
+
+  <div id="adminAuthScreen" class="admin-auth-screen" style="display:none;">
+    <div class="admin-auth-card">
+      <p class="eyebrow">Restricted area</p>
+      <h1>Admin sign in</h1>
+      <form id="adminLoginForm">
+        <label>
+          <span>Username</span>
+          <input id="adminUsername" name="username" type="text" value="admin" autocomplete="username" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Access admin console</button>
+      </form>
+      <p id="adminLoginError" class="muted-text" style="color:#ff8a8a; min-height:1.5em; margin-top:0.75rem;"></p>
+    </div>
+  </div>
+
+  <main class="container admin-page-shell" id="adminMainContent">
+    <div class="admin-layout">
+      <aside class="admin-sidebar" aria-label="Sidebar navigation">
+        <div class="sidebar-brand">
+          <div class="sidebar-mark">S</div>
+          <div>
+            <span class="sidebar-kicker">Operations</span>
+            <strong>Sentinel AI</strong>
+          </div>
+        </div>
+
+        <button class="admin-nav-item active" data-tab="overview" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16V8m5 8V5m5 11v-6"/></svg>
+          <span>Platform Metrics</span>
+        </button>
+        <button class="admin-nav-item" data-tab="specialists" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm6 8v-1a4 4 0 0 0-3-3.87M18 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Specialists</span>
+        </button>
+        <button class="admin-nav-item" data-tab="tickets" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v16l-4-3-4 3-4-3-4 3V5a2 2 0 0 1 2-2zM8 8h8M8 12h8"/></svg>
+          <span>Service Tickets</span>
+        </button>
+      </aside>
+
+      <div class="admin-main">
+        <section class="admin-panel active" data-panel="overview">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Live overview</p>
+              <h1>Platform Metrics</h1>
+            </div>
+            <button class="btn btn-secondary btn-small" id="refreshBtn" type="button">
+              <span class="spinner hidden" aria-hidden="true"></span>
+              Refresh
+            </button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card stat-primary page-fade-up stagger-1">
+              <span class="stat-label">Total Specialists</span>
+              <strong class="stat-value" id="statExperts">0</strong>
+            </article>
+            <article class="stat-card stat-success page-fade-up stagger-2">
+              <span class="stat-label">Total Tickets</span>
+              <strong class="stat-value" id="statRequests">0</strong>
+            </article>
+            <article class="stat-card stat-warning page-fade-up stagger-3">
+              <span class="stat-label">Pending Dispatch</span>
+              <strong class="stat-value" id="statPending">0</strong>
+            </article>
+            <article class="stat-card stat-danger page-fade-up stagger-4">
+              <span class="stat-label">Chat Messages</span>
+              <strong class="stat-value" id="statMessages">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-panel hidden" data-panel="specialists">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Team oversight</p>
+              <h2>Specialist Management</h2>
+            </div>
+            <button class="btn btn-secondary btn-small" id="refreshExpertsBtn" type="button">Refresh</button>
+          </div>
+
+          <div class="table-tools" aria-label="Specialist filters">
+            <label class="search-field" for="expertSearch">
+              <span class="sr-only">Search specialists</span>
+              <input id="expertSearch" type="search" placeholder="Search name or email" autocomplete="off">
+            </label>
+            <div class="filter-row" role="tablist" aria-label="Status filters">
+              <button class="filter-chip active" data-expert-filter="all" type="button">All</button>
+              <button class="filter-chip" data-expert-filter="pending" type="button">Pending</button>
+              <button class="filter-chip" data-expert-filter="approved" type="button">Approved</button>
+              <button class="filter-chip" data-expert-filter="suspended" type="button">Suspended</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="admin-table" aria-label="Specialists table">
+              <thead>
+                <tr>
+                  <th scope="col">Specialist</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Experience</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Online</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="specialistsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-panel hidden" data-panel="tickets">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Queue monitoring</p>
+              <h2>Service Tickets</h2>
+            </div>
+            <button class="btn btn-secondary btn-small" id="refreshTicketsBtn" type="button">Refresh</button>
+          </div>
+
+          <div class="table-tools">
+            <div class="filter-row" role="tablist" aria-label="Ticket status filters">
+              <button class="filter-chip active" data-ticket-filter="all" type="button">All</button>
+              <button class="filter-chip" data-ticket-filter="pending" type="button">Pending</button>
+              <button class="filter-chip" data-ticket-filter="accepted" type="button">Accepted</button>
+              <button class="filter-chip" data-ticket-filter="in_progress" type="button">In Progress</button>
+              <button class="filter-chip" data-ticket-filter="resolved" type="button">Resolved</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="admin-table" aria-label="Tickets table">
+              <thead>
+                <tr>
+                  <th scope="col">Ticket</th>
+                  <th scope="col">Problem</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Severity</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Assigned</th>
+                  <th scope="col">Created</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ticketsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <aside id="ticketDrawer" class="admin-drawer hidden" aria-label="Ticket detail drawer" aria-live="polite">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">Ticket detail</p>
+        <h3 id="drawerTitle">Request details</h3>
+      </div>
+      <button class="icon-button" id="closeDrawerBtn" type="button" aria-label="Close details">✕</button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-card">
+        <span class="status-pill neutral" id="drawerStatus">Pending</span>
+        <h4 id="drawerProblem">Problem</h4>
+        <p id="drawerSummary">Summary</p>
+      </div>
+
+      <div class="drawer-card">
+        <h5>Assignment</h5>
+        <dl class="meta-list">
+          <div><dt>Category</dt><dd id="drawerCategory">-</dd></div>
+          <div><dt>Severity</dt><dd id="drawerSeverity">-</dd></div>
+          <div><dt>Customer</dt><dd id="drawerCustomer">-</dd></div>
+          <div><dt>Assigned expert</dt><dd id="drawerExpert">-</dd></div>
+          <div><dt>Escrow</dt><dd id="drawerEscrow">-</dd></div>
+        </dl>
+      </div>
+
+      <div class="drawer-card">
+        <h5>Uploaded image</h5>
+        <img id="drawerImage" class="drawer-image hidden" alt="Request evidence" src="">
+        <p id="drawerNoImage" class="muted-text">No image uploaded.</p>
+      </div>
+
+      <div class="drawer-card">
+        <h5>Chat transcript</h5>
+        <div id="drawerMessages" class="transcript-list"></div>
+      </div>
+    </div>
+  </aside>
+
+  <div id="confirmModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">Confirmation</p>
+          <h3 id="confirmTitle">Action required</h3>
+        </div>
+        <button class="icon-button" id="closeModalBtn" type="button" aria-label="Close confirmation">✕</button>
+      </div>
+      <p id="confirmMessage" class="modal-copy">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelModalBtn" type="button">Cancel</button>
+        <button class="btn btn-danger" id="confirmActionBtn" type="button">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/ui-motion.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
